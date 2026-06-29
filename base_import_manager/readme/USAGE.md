@@ -1,0 +1,5 @@
+Once import access is configured for a group or role:
+
+1. Log in as a user who belongs to a group/role that does not have "Import Access" for a specific model.
+2. Go to the list or kanban view for that model.
+3. The "Import" option will not be displayed or accessible in the user interface.
