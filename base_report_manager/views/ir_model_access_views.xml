@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="ir_model_access_view_tree_report_manager" model="ir.ui.view">
+        <field name="name">ir.model.access.list.base_report_manager</field>
+        <field name="model">ir.model.access</field>
+        <field name="inherit_id" ref="base.ir_access_view_tree" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='perm_unlink']" position="after">
+                <field name="report_ids" widget="many2many_tags" optional="show" />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="ir_model_access_view_tree_edition_report_manager" model="ir.ui.view">
+        <field name="name">ir.model.access.list.edition.base_report_manager</field>
+        <field name="model">ir.model.access</field>
+        <field name="inherit_id" ref="base.ir_access_view_tree_edition" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='perm_unlink']" position="after">
+                <field name="report_ids" widget="many2many_tags" optional="show" />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="ir_model_access_view_form_report_manager" model="ir.ui.view">
+        <field name="name">ir.model.access.form.base_report_manager</field>
+        <field name="model">ir.model.access</field>
+        <field name="inherit_id" ref="base.ir_access_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='perm_unlink']" position="after">
+                <field name="report_ids" widget="many2many_tags" />
+            </xpath>
+        </field>
+    </record>
+</odoo>
