@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="res_groups_view_form_action_manager" model="ir.ui.view">
+        <field name="name">res.groups.form.base_action_manager</field>
+        <field name="model">res.groups</field>
+        <field name="inherit_id" ref="base.view_groups_form" />
+        <field name="priority" eval="10" />
+        <field name="arch" type="xml">
+            <xpath
+                expr="//field[@name='model_access']//list//field[@name='perm_unlink']"
+                position="after"
+            >
+                <field
+                    name="server_action_ids"
+                    widget="many2many_tags"
+                    optional="show"
+                    readonly="not model_id"
+                />
+                <field
+                    name="window_action_ids"
+                    widget="many2many_tags"
+                    optional="show"
+                    readonly="not model_id"
+                />
+            </xpath>
+        </field>
+    </record>
+</odoo>

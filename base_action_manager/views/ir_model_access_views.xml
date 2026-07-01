@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="ir_model_access_view_tree_action_manager" model="ir.ui.view">
+        <field name="name">ir.model.access.list.base_action_manager</field>
+        <field name="model">ir.model.access</field>
+        <field name="inherit_id" ref="base.ir_access_view_tree" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='perm_unlink']" position="after">
+                <field
+                    name="server_action_ids"
+                    widget="many2many_tags"
+                    optional="show"
+                />
+                <field
+                    name="window_action_ids"
+                    widget="many2many_tags"
+                    optional="show"
+                />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="ir_model_access_view_tree_edition_action_manager" model="ir.ui.view">
+        <field name="name">ir.model.access.list.edition.base_action_manager</field>
+        <field name="model">ir.model.access</field>
+        <field name="inherit_id" ref="base.ir_access_view_tree_edition" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='perm_unlink']" position="after">
+                <field
+                    name="server_action_ids"
+                    widget="many2many_tags"
+                    optional="show"
+                />
+                <field
+                    name="window_action_ids"
+                    widget="many2many_tags"
+                    optional="show"
+                />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="ir_model_access_view_form_action_manager" model="ir.ui.view">
+        <field name="name">ir.model.access.form.base_action_manager</field>
+        <field name="model">ir.model.access</field>
+        <field name="inherit_id" ref="base.ir_access_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='perm_unlink']" position="after">
+                <field name="server_action_ids" widget="many2many_tags" />
+                <field name="window_action_ids" widget="many2many_tags" />
+            </xpath>
+        </field>
+    </record>
+</odoo>
