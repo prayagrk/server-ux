@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="view_groups_form_report_manager" model="ir.ui.view">
+        <field name="name">res.groups.form.report_manager</field>
+        <field name="model">res.groups</field>
+        <field name="inherit_id" ref="base.view_groups_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//notebook/page[@name='access_rights']" position="after">
+                <page name="report_access" string="Report Access">
+                    <field name="report_access_ids">
+                        <list string="Report Access" editable="bottom">
+                            <field name="model_id" />
+                            <field
+                                name="report_ids"
+                                widget="many2many_tags"
+                                domain="['|', ('model_id', '=', model_id), ('binding_model_id', '=', model_id)]"
+                            />
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
