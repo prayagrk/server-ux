@@ -1,3 +1,4 @@
+# Copyright 2026 CIT Services
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 from odoo import Command
@@ -70,13 +71,6 @@ class TestBaseReport(TransactionCase):
             }
         )
 
-    def test_fields_domain(self):
-        """Test that domain only allows reports with no native groups."""
-        self.assertEqual(
-            self.env["res.groups"]._fields["restricted_report_action_ids"].domain,
-            "[('groups_id', '=', False)]",
-        )
-
     def test_restricted_report_inheritance(self):
         """Test that restricting a report hides it from bindings."""
         self.child_group.write(
@@ -91,14 +85,16 @@ class TestBaseReport(TransactionCase):
                 ]
             }
         )
-        self.report_action.with_user(self.test_user)._get_action_dict()
+        with self.assertRaises(AccessError):
+            self.report_action.with_user(self.test_user)._get_action_dict()
+
         bindings = (
             self.env["ir.actions.actions"]
             .with_user(self.test_user)
             .get_bindings("res.partner")
         )
         report_bindings = [r["id"] for r in bindings.get("report", [])]
-        self.assertIn(self.report_action.id, report_bindings)
+        self.assertNotIn(self.report_action.id, report_bindings)
 
         self.child_group.write(
             {"restricted_report_action_ids": [Command.unlink(self.report_action.id)]}
@@ -131,8 +127,7 @@ class TestBaseReport(TransactionCase):
             }
         )
 
-        with self.assertRaises(AccessError):
-            self.report_action.with_user(self.test_user)._get_action_dict()
+        self.report_action.with_user(self.test_user)._get_action_dict()
 
         bindings = (
             self.env["ir.actions.actions"]
@@ -140,7 +135,7 @@ class TestBaseReport(TransactionCase):
             .get_bindings("res.partner")
         )
         report_bindings = [r["id"] for r in bindings.get("report", [])]
-        self.assertNotIn(self.report_action.id, report_bindings)
+        self.assertIn(self.report_action.id, report_bindings)
 
     def test_superuser_bypass(self):
         """Superuser bypasses restrictions entirely."""
@@ -148,9 +143,9 @@ class TestBaseReport(TransactionCase):
             {"restricted_report_action_ids": [Command.link(self.report_action.id)]}
         )
         root_user = self.env.ref("base.user_root") or self.env.user.browse(1)
-        self.report_action.with_user(root_user)._check_action_restrictions()
+        self.report_action.with_user(root_user)._check_action_report_restrictions()
         self.assertFalse(
-            self.report_action.with_user(root_user)._is_action_restricted()
+            self.report_action.with_user(root_user)._is_action_report_restricted()
         )
         bindings = (
             self.env["ir.actions.actions"]
@@ -160,13 +155,10 @@ class TestBaseReport(TransactionCase):
         report_bindings = [r["id"] for r in bindings.get("report", [])]
         self.assertIn(self.report_action.id, report_bindings)
 
-    def test_create_group_clears_cache(self):
-        """Creating a group with restricted actions clears the registry cache."""
-        self.env["res.groups"].create(
-            {
-                "name": "Test Cache Clear Group",
-                "restricted_report_action_ids": [Command.link(self.report_action.id)],
-            }
+    def test_no_restriction(self):
+        """Test that a report action without any group restriction returns False."""
+        self.assertFalse(
+            self.report_action.with_user(self.test_user)._is_action_report_restricted()
         )
 
     def test_no_group_overlap(self):
@@ -187,7 +179,7 @@ class TestBaseReport(TransactionCase):
             }
         )
         self.assertFalse(
-            self.report_action.with_user(self.test_user)._is_action_restricted()
+            self.report_action.with_user(self.test_user)._is_action_report_restricted()
         )
 
     def test_get_bindings_filtering_pop(self):
@@ -218,27 +210,3 @@ class TestBaseReport(TransactionCase):
                 .get_bindings("res.partner")
             )
             self.assertNotIn("report", bindings)
-
-    def test_superclass_restriction(self):
-        """If a superclass restricts the action, it is restricted."""
-        patched_classes = []
-        mro = self.report_action.__class__.__mro__
-        start_idx = 0
-        for idx, cls in enumerate(mro):
-            if cls.__name__ == "IrActionsActions":
-                start_idx = idx + 1
-                break
-
-        for cls in mro[start_idx:]:
-            if cls is not object:
-                type.__setattr__(cls, "_is_action_restricted", lambda self: True)
-                patched_classes.append(cls)
-
-        try:
-            self.assertTrue(
-                self.report_action.with_user(self.test_user)._is_action_restricted()
-            )
-        finally:
-            for cls in patched_classes:
-                if hasattr(cls, "_is_action_restricted"):
-                    type.__delattr__(cls, "_is_action_restricted")

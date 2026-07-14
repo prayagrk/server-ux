@@ -2,3 +2,4 @@
 
 from . import res_groups
 from . import ir_actions_actions
+from . import ir_actions_report
