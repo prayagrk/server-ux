@@ -98,8 +98,9 @@ Authors
 Contributors
 ------------
 
-- CIT Services https://cit-services.eu
-- Prayag prayag.k@cit-services.eu
+- `CIT-Services <cit-services.eu>`__
+
+  - Prayag <prayag.k@cit-services.eu>
 
 Maintainers
 -----------

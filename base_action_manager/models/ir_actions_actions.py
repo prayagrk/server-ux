@@ -61,15 +61,12 @@ class IrActionsActions(models.Model):
 
             actions = self.browse(action_ids)
             restricted_ids = {
-                action.id
-                for action in actions
-                if action._is_action_action_restricted()
+                action.id for action in actions if action._is_action_action_restricted()
             }
 
             if restricted_ids:
                 filtered_list = [
-                    act for act in result[key]
-                    if act.get("id") not in restricted_ids
+                    act for act in result[key] if act.get("id") not in restricted_ids
                 ]
                 if filtered_list:
                     result[key] = filtered_list
